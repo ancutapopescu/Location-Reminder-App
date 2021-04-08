@@ -23,6 +23,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
+import com.google.android.material.snackbar.Snackbar
 import com.udacity.project4.locationreminders.geofence.GeofenceBroadcastReceiver
 import com.udacity.project4.locationreminders.geofence.GeofenceConstants
 import com.udacity.project4.locationreminders.geofence.GeofenceConstants.ACTION_GEOFENCE_EVENT
@@ -202,7 +203,12 @@ class SaveReminderFragment : BaseFragment() {
                     Log.d(TAG, "Error getting location settings resolution: " + sendEx.message)
                 }
             } else {
-                // Explain user why app needs this permission
+                Snackbar.make(
+                        binding.fragmentSaveReminder,
+                        R.string.location_required_error, Snackbar.LENGTH_INDEFINITE
+                ).setAction(android.R.string.ok) {
+                    checkDeviceLocationSettingsAndStartGeofence()
+                }.show()
             }
         }
         locationSettingsResponseTask.addOnCompleteListener {
@@ -259,3 +265,5 @@ class SaveReminderFragment : BaseFragment() {
     }
 
 }
+
+
