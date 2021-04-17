@@ -257,9 +257,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             }
         }
     }
-
-
-
 }
 
 
