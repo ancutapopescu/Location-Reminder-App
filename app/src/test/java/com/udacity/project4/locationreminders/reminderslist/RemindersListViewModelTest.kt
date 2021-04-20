@@ -20,7 +20,6 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.MatcherAssert
 import org.robolectric.annotation.Config
 
-
 @RunWith(AndroidJUnit4::class)
 @ExperimentalCoroutinesApi
 class RemindersListViewModelTest {
