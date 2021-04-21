@@ -1,5 +1,6 @@
 package com.udacity.project4.locationreminders.data.local
 
+import android.os.Build
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
@@ -15,7 +16,9 @@ import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.*
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 
+@Config(sdk = [Build.VERSION_CODES.O])
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 //Medium Test to test the repository

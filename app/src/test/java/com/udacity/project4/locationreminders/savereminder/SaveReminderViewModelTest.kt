@@ -13,6 +13,7 @@ import com.udacity.project4.locationreminders.getOrAwaitValue
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import com.udacity.project4.locationreminders.reminderslist.RemindersListViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.notNullValue
@@ -26,7 +27,7 @@ import org.robolectric.annotation.Config
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.Is.`is`
 
-
+@Config(sdk = [Build.VERSION_CODES.O])
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 class SaveReminderViewModelTest {

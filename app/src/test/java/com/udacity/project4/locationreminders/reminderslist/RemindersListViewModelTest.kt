@@ -9,6 +9,7 @@ import com.udacity.project4.locationreminders.data.FakeDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.getOrAwaitValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.core.Is.`is`
 import org.junit.Before
@@ -20,6 +21,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.MatcherAssert
 import org.robolectric.annotation.Config
 
+@Config(sdk = [Build.VERSION_CODES.O])
 @RunWith(AndroidJUnit4::class)
 @ExperimentalCoroutinesApi
 class RemindersListViewModelTest {
@@ -45,42 +47,43 @@ class RemindersListViewModelTest {
                 ApplicationProvider.getApplicationContext(),
                 fakeDataSource
         )
+
     }
 
-    @Test
-    fun loadReminders_loading() = mainCoroutineRule.runBlockingTest {
-        // Pause dispatcher so you can verify initial values.
-        mainCoroutineRule.pauseDispatcher()
+        @Test
+        fun loadReminders_loading() = runBlockingTest {
+            // Pause dispatcher so you can verify initial values.
+            mainCoroutineRule.pauseDispatcher()
 
-        // Load the reminder in the viewmodel.
-        remindersListViewModel.loadReminders()
+            // Load the reminder in the viewmodel.
+            remindersListViewModel.loadReminders()
 
-        // Then assert that the progress indicator is shown.
-        assertThat(remindersListViewModel.showLoading.getOrAwaitValue(), `is`(true))
+            // Then assert that the progress indicator is shown.
+            assertThat(remindersListViewModel.showLoading.getOrAwaitValue(), `is`(true))
 
-        // Execute pending coroutines actions.
-        mainCoroutineRule.resumeDispatcher()
+            // Execute pending coroutines actions.
+            mainCoroutineRule.resumeDispatcher()
 
-        // Then assert that the progress indicator is hidden.
-        assertThat(remindersListViewModel.showLoading.getOrAwaitValue(), `is`(false))
-        assertThat(remindersListViewModel.showNoData.getOrAwaitValue(), `is`(true))
+            // Then assert that the progress indicator is hidden.
+            assertThat(remindersListViewModel.showLoading.getOrAwaitValue(), `is`(false))
+            assertThat(remindersListViewModel.showNoData.getOrAwaitValue(), `is`(true))
+        }
+
+        @Test
+        fun loadRemindersWhenRemindersAreUnavailable_callErrorToDisplay() = runBlockingTest {
+            // Make the repository return errors.
+            fakeDataSource.setShouldReturnError(true)
+            remindersListViewModel.loadReminders()
+
+            // Then empty and error are true (which triggers an error message to be shown).
+            assertThat(remindersListViewModel.showSnackBar.getOrAwaitValue(), `is`("Reminders not found"))
+        }
+
+        @Test
+        fun loadReminders_hasError_showsError() = runBlockingTest {
+            fakeDataSource.deleteAllReminders()
+            remindersListViewModel.loadReminders()
+            assertThat(remindersListViewModel.showNoData.getOrAwaitValue(), `is`(true))
+        }
+
     }
-
-    @Test
-    fun loadRemindersWhenRemindersAreUnavailable_callErrorToDisplay() = mainCoroutineRule.runBlockingTest {
-        // Make the repository return errors.
-        fakeDataSource.setShouldReturnError(true)
-        remindersListViewModel.loadReminders()
-
-        // Then empty and error are true (which triggers an error message to be shown).
-        assertThat(remindersListViewModel.showSnackBar.getOrAwaitValue(), `is`("Reminders not found"))
-    }
-
-    @Test
-    fun loadReminders_hasError_showsError() = mainCoroutineRule.runBlockingTest {
-        fakeDataSource.deleteAllReminders()
-        remindersListViewModel.loadReminders()
-        assertThat(remindersListViewModel.showNoData.getOrAwaitValue(), `is`(true))
-    }
-
-}
